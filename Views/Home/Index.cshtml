@@ -1,0 +1,94 @@
+﻿@{ 
+    const float MILES_PER_KILOMETER = 0.621371f; // Miles per Kilometer
+    const float KILOGRAMS_TO_POUNDS = 2.2046f;
+}
+@if (ViewBag.AccessToken != null)
+{
+    <div class="jumbotron">
+        <p class="text-center bg-primary">@ViewBag.Date</p>
+        <img src="@ViewBag.Profile.Avatar" />
+        <h3>
+            Welcome back, @ViewBag.Profile.DisplayName
+        </h3>
+        <span>
+            <b>Daily Details</b>:
+        </span>
+        <ul>
+            <li>
+                Last Synced: 
+                @{ 
+                    if (ViewBag.Device != null)
+                    {
+                        DateTime format = (DateTime)ViewBag.Device.LastSyncTime;
+                        @SampleWebMVCOAuth2.Helpers.DateTimeExtensions.ToRelativeDate(format);
+                    } else
+                    {
+                        <span>N/A</span>
+                    }
+                }
+            </li>
+            <li>
+                Calories left to eat: 
+                @{
+                    if (ViewBag.Food.Goals != null)
+                    {
+                        <span>@string.Format("{0:n0}", (ViewBag.Food.Goals.Calories - ViewBag.Food.Summary.Calories))</span>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                }
+            </li>
+            <li>
+                Pounds to go: 
+                @string.Format("{0:0.0}", ((ViewBag.Profile.Weight - ViewBag.Weight.Goals.Weight) * KILOGRAMS_TO_POUNDS))
+            </li>
+
+            <!-- Daily Totals -->
+            <li>
+                Distance: 
+                @string.Format("{0:0.0}", (ViewBag.DayActivity.Distances[0].Distance * MILES_PER_KILOMETER)) miles
+            </li>
+            <li>
+                Steps: 
+                @string.Format("{0:n0}",ViewBag.DayActivity.Steps)
+            </li>
+        </ul>
+        <hr />
+        <h6>
+            This is a work in progress. More features might be added in the future.
+        </h6>
+    </div>
+
+    <div class="row collapse">
+  
+            <p>
+                Token -- 
+                <a style="word-wrap:break-word" id="accessTokenId"> @ViewBag.AccessToken.Token</a>
+            </p>
+            <p>
+                Token type -- 
+                <a id="accessTokenType"> @ViewBag.AccessToken.TokenType</a> 
+            </p>
+            <p>
+                Expires In -- 
+                <a id="accessTokenExpiration"> @ViewBag.AccessToken.ExpiresIn</a> 
+            </p>
+            <p>
+                Refresh token -- 
+                <a id="RefreshToken"> @ViewBag.AccessToken.RefreshToken</a>
+            </p>
+
+    </div>
+}
+else {
+    <div class="row">
+
+        <p>
+            The current session has not been authenticated with fitbit. 
+            <h4>Please click "sign in" in the navigation bar above.</h4>
+        </p>
+        
+    </div>
+                }

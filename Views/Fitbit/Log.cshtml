@@ -1,0 +1,268 @@
+﻿@model Fitbit.Models.Food
+@{
+    const string DETAILED = "Detailed";
+    const string SIMPLE = "Simple";
+
+    string specType = SIMPLE;
+    List<SelectListItem> logSpecs = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Simple", Value = "simple"},
+                    new SelectListItem { Text = "Detailed", Value = "detailed"},
+
+                };
+
+    List<SelectListItem> items = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Today", Value = "today"},
+                    new SelectListItem { Text = "Yesterday", Value = "yesterday"},
+                    new SelectListItem { Text = "Week ago", Value = "weekago"},
+                    new SelectListItem { Text = "2 Weeks ago", Value = "2weeksago"},
+                    //new SelectListItem { Text = "This Month", Value = "thismonth"},
+                    //new SelectListItem { Text = "Last Month", Value = "lastmonth"},
+                    //new SelectListItem { Text = "2 Months ago", Value = "2monthsago"},
+                };
+
+    int id = items.FindIndex(item => item.Value == ViewBag.SelectedDate);
+    items[id].Selected = true;
+    ViewBag.ViewByDate = items;
+
+    //Meal type. 1=Breakfast; 2=Morning Snack; 3=Lunch; 4=Afternoon Snack; 5=Dinner; 7=Anytime
+    int mealId = -1;
+    int counter = 0;
+
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table table-responsive">
+                <br />
+                <br />
+                <p>
+                    @Html.DropDownList("ViewByDate", null, new { @onchange = "location = '?viewByDate='+this.value" })
+                </p>
+
+                <table class="table table-bordered table-condensed">
+                    
+                    @if (specType == DETAILED)
+                    {
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Name)
+                            </th>
+                            @*<th>
+                                    @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.FoodId)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Amount)
+                                </th>*@
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Fat)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Carbs)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Protein)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Fiber)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Sodium)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Calories)
+                            </th>
+                        </tr>
+                    </thead>
+                        foreach (var foodLog in ViewBag.Foods)
+                        {
+                            <tr>
+                                @if (foodLog.Foods.Count == 0)
+                                {
+                                    <td colspan="9" class="danger">
+                                        <br />
+                                        <span>There are no food logs for <b>@DateTime.Now.AddDays(-counter).ToLongDateString()</b>.</span>
+                                        <br /><br />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td colspan="9" class="active">
+                                        @{
+                                            <span class="glyphicon glyphicon-time"> </span><b class="text-uppercase"> @foodLog.Foods[0].LogDate.ToLongDateString()</b>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+
+                                foreach (var foodItem in foodLog.Foods)
+                                {
+                                    if (mealId != foodItem.LoggedFood.MealTypeId)
+                                    {
+                                        mealId = (int)foodItem.LoggedFood.MealTypeId;
+                                        <tr>
+                                            <td colspan="9" class="success">
+                                                @if (mealId == 1)
+                                                {
+                                                    <span style="font-weight:bold"> Breakfast</span>
+                                                }
+                                                else if (mealId == 2)
+                                                {
+                                                    <span style="font-weight:bold"> Morning Snack</span>
+                                                }
+                                                else if (mealId == 3)
+                                                {
+                                                    <span style="font-weight:bold">Lunch</span>
+                                                }
+                                                else if (mealId == 4)
+                                                {
+                                                    <span style="font-weight:bold">Afternoon Snack</span>
+                                                }
+                                                else if (mealId == 5)
+                                                {
+                                                    <span style="font-weight:bold">Dinner</span>
+                                                }
+                                                else if (mealId == 7)
+                                                {
+                                                    <span style="font-weight:bold">Anytime</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td>
+                                            @foodItem.LoggedFood.Name
+                                        </td>
+                                        @*<td class="text-right">
+                                                @foodItem.LoggedFood.FoodId
+                                            </td>
+                                            <td class="text-right">
+                                                @foodItem.LoggedFood.Amount
+                                            </td>*@
+                                        <td class="text-right">
+                                            @if (foodItem.NutritionalValues == null)
+                                            { <span>0</span> }
+                                            else { <span>@float.Parse(foodItem.NutritionalValues.Fat.ToString())</span> }
+
+                                        </td>
+                                        <td class="text-right">
+                                            @if (foodItem.NutritionalValues == null)
+                                            { <span>0</span> }
+                                            else { <span>@float.Parse(foodItem.NutritionalValues.Carbs.ToString())</span> }
+                                        </td>
+                                        <td class="text-right">
+                                            @if (foodItem.NutritionalValues == null)
+                                            { <span>0</span> }
+                                            else { <span>@float.Parse(foodItem.NutritionalValues.Protein.ToString())</span> }
+                                        </td>
+                                        <td class="text-right">
+                                            @if (foodItem.NutritionalValues == null)
+                                            { <span>0</span> }
+                                            else { <span>@float.Parse(foodItem.NutritionalValues.Fiber.ToString())</span> }
+                                        </td>
+                                        <td class="text-right">
+                                            @if (foodItem.NutritionalValues == null)
+                                            { <span>0</span> }
+                                            else { <span>@float.Parse(foodItem.NutritionalValues.Sodium.ToString())</span> }
+                                        </td>
+                                        <td class="text-right">
+                                            @foodItem.LoggedFood.Calories
+                                        </td>
+                                    </tr>
+
+                                }
+                                if (foodLog.Foods.Count != 0)
+                                {
+                                    <tr class="alert alert-success" role="alert">
+                                        <td colspan="1" class="text-right">
+                                            <b>Subtotal</b>
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Fat
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Carbs
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Protein
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Fiber
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Sodium
+                                        </td>
+                                        <td class="text-right">
+                                            @foodLog.Summary.Calories
+                                        </td>
+                                    </tr>
+                                }
+                                <tr class="bg-primary">
+                                    <td colspan="9"></td>
+                                </tr>
+
+                            counter++;
+                        }
+                    }
+                    else if(specType == SIMPLE)
+                    {
+                        foreach (var foodLog in ViewBag.Foods)
+                        {
+                            <tr>
+                                @if (foodLog.Foods.Count == 0)
+                                {
+                                    <td colspan="9" class="danger">
+                                        <br />
+                                        <span>There are no food logs for <b>@DateTime.Now.AddDays(-counter).ToLongDateString()</b>.</span>
+                                        <br /><br />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td colspan="9" class="active">
+                                        @{
+                                            <span class="glyphicon glyphicon-time"> </span><b class="text-uppercase"> @foodLog.Foods[0].LogDate.ToLongDateString()</b>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                            if (foodLog.Foods.Count != 0)
+                            {
+                                <tr class="alert alert-success" role="alert">
+                                    <td colspan="1" class="text-right">
+                                        <b>Total</b>
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Fat
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Carbs
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Protein
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Fiber
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Sodium
+                                    </td>
+                                    <td class="text-right">
+                                        @foodLog.Summary.Calories
+                                    </td>
+                                </tr>
+                                <tr class="bg-primary">
+                                    <td colspan="9"></td>
+                                </tr>
+                            }
+                            counter++;
+                        }
+                        
+                    }
+                </table>
+            </div>
+            </div>
+        </div>
+    </div>

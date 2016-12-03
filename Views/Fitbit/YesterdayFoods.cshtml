@@ -1,0 +1,142 @@
+﻿@model Fitbit.Models.Food
+
+@{
+    ViewBag.Title = "Foods";
+}
+
+@{ 
+    //Meal type. 1=Breakfast; 2=Morning Snack; 3=Lunch; 4=Afternoon Snack; 5=Dinner; 7=Anytime 
+    int mealId = -1;
+}
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods)
+        </th>
+        
+    </tr>
+   
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].LogDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.FoodId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Fat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Carbs)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Protein)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].NutritionalValues.Fiber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Foods[0].LoggedFood.Calories)
+        </th>
+    </tr>
+  
+
+    @foreach (var item in Model.Foods)
+    {
+        if(mealId != item.LoggedFood.MealTypeId)
+        {
+            mealId = (int)item.LoggedFood.MealTypeId;
+            <tr>
+                <td colspan="8">
+                    @if(mealId == 1){
+                        <span style="color: red; font-weight:bold"> Breakfast</span>
+                    }else if (mealId == 2){
+                        <span style="color: red; font-weight:bold"> Morning Snack</span>
+                    } else if(mealId == 3){
+                        <span style="color: red; font-weight:bold">Lunch</span>
+                    }else if(mealId == 4){
+                        <span style="color: red; font-weight:bold">Afternoon Snack</span>
+                    }else if(mealId == 5){
+                        <span style="color: red; font-weight:bold">Dinner</span>
+                    }else if(mealId == 7){
+                        <span style="color: red; font-weight:bold">Anytime</span>
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <th>
+                @{
+                    string me = Html.DisplayFor(modelItem => item.LogDate).ToString();
+                    DateTime theDate = DateTime.Parse(me);
+                    @theDate.ToShortDateString()
+                }
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoggedFood.Name) 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoggedFood.FoodId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoggedFood.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NutritionalValues.Fat) 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NutritionalValues.Carbs) 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NutritionalValues.Protein)              
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NutritionalValues.Fiber) 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoggedFood.Calories)
+            </td>
+        </tr>
+    }
+    <tr>
+        <td colspan="3">
+
+        </td>
+        <td>
+            <h4>
+                @Html.DisplayFor(summeryItem => Model.Summary.Fat)
+            </h4>
+       </td>
+
+        <td>
+            <h4>
+                @Html.DisplayFor(summeryItem => Model.Summary.Carbs)
+            </h4>
+       </td>
+
+        <td>
+            <h4>
+                @Html.DisplayFor(summeryItem => Model.Summary.Protein)
+            </h4>
+       </td>
+
+        <td>
+            <h4>
+                @Html.DisplayFor(summeryItem => Model.Summary.Fiber)
+            </h4>
+       </td>
+
+        <td>
+            <h4>
+                @Html.DisplayFor(summeryItem => Model.Summary.Calories)
+            </h4>
+       </td>
+
+    </tr>
+</table>
